@@ -95,7 +95,7 @@ tippy.setDefaultProps({
   onHide(instance) {
     setTimeout(() => {
       instance.destroy();
-    }, 3000);
+    }, 300);
   },
   onShow() {
     tippy.hideAll({ duration: 0 });

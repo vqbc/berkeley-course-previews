@@ -2,6 +2,10 @@
   pointer-events: all !important;
 }
 
+.tippy-content * {
+  color: #fff !important;
+}
+
 .tippy-content .coursebody {
   height: 250px;
   overflow-y: scroll;
@@ -13,13 +17,8 @@
   margin: 0 !important;
   padding: 10px !important;
   background-color: #203866 !important;
-  color: #fff !important;
   font-weight: bold;
   font-size: 1.2em !important;
-}
-
-.tippy-content .courseblocktitle a {
-  color: #fff;
 }
 
 .tippy-content .courseblock p.courseblockdesc,
