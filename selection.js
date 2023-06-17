@@ -75,6 +75,7 @@ var aliases = {
   "vis std": ["visstd"],
 };
 var courseRegex = /^(?:(?:[A-Z]|,){1,8}\s){1,3}?[A-Z]?\d{1,3}[A-Z]{0,2}$/;
+var port = chrome.runtime.connect({ name: "selection" });
 
 String.prototype.getStandardName = function () {
   var workingName = this.toLowerCase().replace(/\xA0/g, " ");
@@ -100,12 +101,10 @@ tippy.setDefaultProps({
     tippy.hideAll({ duration: 0 });
   },
 });
-var port = chrome.runtime.connect({ name: "selection" });
 
 document.onselectionchange = () => {
   selectionObj = document.getSelection()?.anchorNode?.parentElement;
   selectionText = document.getSelection()?.toString().trim();
-  console.log(selectionText.getStandardName());
   if (selectionText?.getStandardName().match(courseRegex)) {
     port.postMessage({ courseName: selectionText.getStandardName() });
   } else {
@@ -127,6 +126,7 @@ function showCourseReady(req) {
     content: html,
   }).show();
 }
+
 function showCourseError(req) {
   var html =
     "<p>An error occurred trying to load course information.  Please try your request again later. (" +
@@ -140,8 +140,8 @@ function showCourseError(req) {
 }
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.courseName) {
-    stdName = request.courseName;
+  if (request.selection) {
+    stdName = request.selection.getStandardName();
     selectionObj.blur();
     ribbiturl = "https://guide.berkeley.edu/ribbit/index.cgi";
     var gcurl =
