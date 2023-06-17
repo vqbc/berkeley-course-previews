@@ -74,9 +74,9 @@ var aliases = {
   "vis std": ["visstd"],
 };
 var courseRegex = /^(?:(?:[A-Z]|,){1,8}\s){1,3}?[A-Z]?\d{1,3}[A-Z]{0,2}$/;
-var port = chrome.runtime.connect({ name: "selection" });
 var urlPrefix =
   "https://corsproxy.io/?https://guide.berkeley.edu/ribbit/index.cgi?page=getcourse.rjs&code=";
+var html;
 
 String.prototype.getStandardName = function () {
   var workingName = this.toLowerCase().replace(/\xA0/g, " ");
@@ -121,15 +121,22 @@ document.onselectionchange = () => {
   }
 };
 
-function showCourseReady(req) {
+async function showCourseReady(req) {
   if ($(req).find("course").length) {
-    var html = $(req).find("course").text();
+    html = $(req).find("course").text();
   } else {
-    var html =
-      "<p>Course information cannot be found. This course may " +
-      "no longer be offered. If you believe there is an error or " +
-      "require more information, please contact the course " +
-      "department.</p>";
+    var newReq = await $.ajax({
+      url: urlPrefix + encodeURIComponent(stdName.replace(/ (\d)/, " C$1")),
+    });
+    if ($(newReq).find("course").length) {
+      html = $(newReq).find("course").text();
+    } else {
+      html =
+        "<p>Course information cannot be found. This course may " +
+        "no longer be offered. If you believe there is an error or " +
+        "require more information, please contact the course " +
+        "department.</p>";
+    }
   }
   tippy(selectionObj, {
     content: html,
@@ -137,12 +144,9 @@ function showCourseReady(req) {
 }
 
 function showCourseError(req) {
-  var html =
-    "<p>An error occurred trying to load course information.  Please try your request again later. (" +
-    req.status +
-    " - " +
-    req.statusText +
-    ")</p>";
+  html = `<p>An error occurred trying to load course information.
+          Please try your request again later.
+          (${req.status} - ${req.statusText})</p>`;
   tippy(selectionObj, {
     content: html,
   }).show();
