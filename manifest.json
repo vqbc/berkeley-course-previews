@@ -1,0 +1,28 @@
+{
+  "name": "berkeley-course-previews",
+  "description": "One-click way to search up Berkeley courses",
+  "version": "1.0.0",
+  "manifest_version": 3,
+  "permissions": ["contextMenus"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "run_at": "document_end",
+      "css": ["styles.css"],
+      "js": [
+        "jquery-3.7.0.min.js",
+        "popperjs-2.11.8.min.js",
+        "tippyjs-6.3.7.min.js",
+        "selection.js"
+      ],
+      "all_frames": false
+    }
+  ],
+  "icons": {
+    "48": "icon48.png",
+    "128": "icon128.png"
+  }
+}
