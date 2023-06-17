@@ -16,7 +16,6 @@ tippy.setDefaultProps({
 
 document.onselectionchange = () => {
   selectionObj = document.getSelection()?.anchorNode?.parentElement;
-  console.log(selectionObj);
 };
 
 function showCourseReady(req) {
@@ -46,11 +45,6 @@ function showCourseError(req) {
 }
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-  console.log(
-    sender.tab
-      ? "from a content script:" + sender.tab.url
-      : "from the extension"
-  );
   if (request.courseName) {
     stdName = request.courseName;
     selectionObj.blur();
@@ -60,7 +54,6 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
       ribbiturl +
       "?page=getcourse.rjs&code=" +
       encodeURIComponent(stdName);
-    console.log(gcurl);
     $.ajax({
       url: gcurl,
       success: showCourseReady,

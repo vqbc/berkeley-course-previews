@@ -76,7 +76,6 @@ var selectionObj;
 
 function showCourse(args) {
   var workingName = args.selectionText.toLowerCase().replace(/\xA0/g, " ");
-  console.log(workingName);
   for (var [dept, names] of Object.entries(aliases)) {
     for (var name of names) {
       regex = new RegExp("^" + name + "(?:\\s|(\\d))");
@@ -84,7 +83,6 @@ function showCourse(args) {
     }
   }
   var stdName = workingName.toUpperCase();
-  console.log(stdName);
 
   (async () => {
     const [tab] = await chrome.tabs.query({
@@ -94,24 +92,16 @@ function showCourse(args) {
     const response = await chrome.tabs.sendMessage(tab.id, {
       courseName: stdName,
     });
-    // do something with response here, not outside the function
-    console.log(response);
   })();
 }
 
-chrome.runtime.onConnect.addListener(function (port) {
-  console.assert(port.name === "selection");
-  port.onMessage.addListener(function (msg) {
-    if (msg.object) {
-      selectionObj = msg.object;
-    }
-  });
-});
-
-// chrome.offscreen.createDocument({
-//   url: chrome.runtime.getURL("offscreen.html"),
-//   reasons: ["DOM_SCRAPING"],
-//   justification: "Accessing selection position to add a popup",
+// chrome.runtime.onConnect.addListener(function (port) {
+//   console.assert(port.name === "selection");
+//   port.onMessage.addListener(function (msg) {
+//     if (msg.object) {
+//       selectionObj = msg.object;
+//     }
+//   });
 // });
 
 chrome.contextMenus.removeAll(function () {
