@@ -75,6 +75,8 @@ var aliases = {
 };
 var courseRegex = /^(?:(?:[A-Z]|,){1,8}\s){1,3}?[A-Z]?\d{1,3}[A-Z]{0,2}$/;
 var port = chrome.runtime.connect({ name: "selection" });
+var urlPrefix =
+  "https://corsproxy.io/?https://guide.berkeley.edu/ribbit/index.cgi?page=getcourse.rjs&code=";
 
 String.prototype.getStandardName = function () {
   var workingName = this.toLowerCase().replace(/\xA0/g, " ");
@@ -146,24 +148,18 @@ function showCourseError(req) {
   }).show();
 }
 
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((request) => {
   if (request.selection) {
     stdName = request.selection.getStandardName();
     selectionObj.blur();
-    ribbiturl = "https://guide.berkeley.edu/ribbit/index.cgi";
-    var gcurl =
-      "https://corsproxy.io/?" +
-      ribbiturl +
-      "?page=getcourse.rjs&code=" +
-      encodeURIComponent(stdName);
+
     $.ajax({
-      url: gcurl,
+      url: urlPrefix + encodeURIComponent(stdName),
       success: showCourseReady,
       error: showCourseError,
     });
     tippy(selectionObj, {
       content: "Loading course description…",
     }).show();
-    sendResponse(true);
   }
 });
