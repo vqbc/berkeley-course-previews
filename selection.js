@@ -106,9 +106,17 @@ document.onselectionchange = () => {
   selectionObj = document.getSelection()?.anchorNode?.parentElement;
   selectionText = document.getSelection()?.toString().trim();
   if (selectionText?.getStandardName().match(courseRegex)) {
-    port.postMessage({ courseName: selectionText.getStandardName() });
+    (async () => {
+      await chrome.runtime.sendMessage({
+        courseName: selectionText.getStandardName(),
+      });
+    })();
   } else {
-    port.postMessage({ courseName: false });
+    (async () => {
+      await chrome.runtime.sendMessage({
+        courseName: false,
+      });
+    })();
   }
 };
 
