@@ -95,20 +95,22 @@ function showCourse(args) {
   })();
 }
 
-// chrome.runtime.onConnect.addListener(function (port) {
-//   console.assert(port.name === "selection");
-//   port.onMessage.addListener(function (msg) {
-//     if (msg.object) {
-//       selectionObj = msg.object;
-//     }
-//   });
-// });
+chrome.contextMenus.removeAll();
 
-chrome.contextMenus.removeAll(function () {
-  chrome.contextMenus.create({
-    id: "1",
-    title: "View course preview for %s",
-    contexts: ["selection"], // ContextType
+chrome.runtime.onConnect.addListener((port) => {
+  console.assert(port.name === "selection");
+  port.onMessage.addListener(function (msg) {
+    if (msg.courseName) {
+      chrome.contextMenus.removeAll(() => {
+        chrome.contextMenus.create({
+          id: "1",
+          title: "View course preview for %s",
+          contexts: ["selection"],
+        });
+      });
+    } else {
+      chrome.contextMenus.removeAll();
+    }
   });
 });
 

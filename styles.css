@@ -41,6 +41,7 @@
   width: 100%;
 }
 
-.tippy-content .btn-readless {
+.tippy-content .btn-readless,
+.tippy-content .btn-readmore {
   display: none;
 }
