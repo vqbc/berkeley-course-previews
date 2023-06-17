@@ -2,14 +2,14 @@
   pointer-events: all !important;
 }
 
-.coursebody {
+.tippy-content .coursebody {
   height: 250px;
   overflow-y: scroll;
   padding: 10px !important;
   border: none !important;
 }
 
-.courseblocktitle {
+.tippy-content .courseblocktitle {
   margin: 0 !important;
   padding: 10px !important;
   background-color: #203866 !important;
@@ -18,29 +18,29 @@
   font-size: 1.2em !important;
 }
 
-.courseblocktitle a {
+.tippy-content .courseblocktitle a {
   color: #fff;
 }
 
-.courseblock p.courseblockdesc,
-.courseblock p.courseblockoffered,
-.courseblock .course-section {
+.tippy-content .courseblock p.courseblockdesc,
+.tippy-content .courseblock p.courseblockoffered,
+.tippy-content .courseblock .course-section {
   margin: 0 0 10px 0;
 }
 
-.courseblock p.course-heading {
+.tippy-content .courseblock p.course-heading {
   margin: 0 0 0.25em -5px;
   padding: 3px 5px;
   background: #444;
 }
 
-.btn_toggleCoursebody {
+.tippy-content .btn_toggleCoursebody {
   background: initial;
   border: none !important;
   padding: 0;
   width: 100%;
 }
 
-.btn-readless {
+.tippy-content .btn-readless {
   display: none;
 }
