@@ -131,11 +131,18 @@ async function showCourseReady(req) {
     if ($(newReq).find("course").length) {
       html = $(newReq).find("course").text();
     } else {
-      html =
-        "<p>Course information cannot be found. This course may " +
-        "no longer be offered. If you believe there is an error or " +
-        "require more information, please contact the course " +
-        "department.</p>";
+      var newReq = await $.ajax({
+        url: urlPrefix + encodeURIComponent(stdName.replace(/(\d)$/, "$1AC")),
+      });
+      if ($(newReq).find("course").length) {
+        html = $(newReq).find("course").text();
+      } else {
+        html =
+          "<p>Course information cannot be found. This course may " +
+          "no longer be offered. If you believe there is an error or " +
+          "require more information, please contact the course " +
+          "department.</p>";
+      }
     }
   }
   tippy(selectionObj, {
