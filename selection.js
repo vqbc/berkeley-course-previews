@@ -104,7 +104,9 @@ tippy.setDefaultProps({
 });
 
 document.onselectionchange = () => {
-  selectionObj = document.getSelection()?.anchorNode?.parentElement;
+  if (!document.getSelection().isCollapsed)
+    selectionObj = document.getSelection()?.anchorNode?.parentElement;
+
   selectionText = document.getSelection()?.toString().trim();
   if (selectionText?.getStandardName().match(courseRegex)) {
     (async () => {
@@ -149,7 +151,10 @@ async function showCourseReady(response) {
   }
   var htmlObj = $(html);
   htmlObj.find("a").each(function () {
-    $(this).attr("href", "https://guide.berkeley.edu" + $(this).attr("href"));
+    $(this).attr({
+      href: "https://guide.berkeley.edu" + $(this).attr("href"),
+      onclick: "",
+    });
   });
   html = htmlObj.prop("outerHTML");
 
@@ -165,7 +170,18 @@ async function showCourseReady(response) {
     },
   });
 
-  
+  $(".tippy-box a.bubblelink.code").click(async function (event) {
+    event.preventDefault();
+    let stdName = $(this).attr("title").replace(/\xA0/g, " ");
+
+    try {
+      response = await fetch(urlPrefix + encodeURIComponent(stdName));
+      response = await response.text();
+      showCourseReady(response);
+    } catch (error) {
+      showCourseError();
+    }
+  });
 }
 
 function showCourseError() {
