@@ -4,7 +4,7 @@ function showCourse(args) {
       active: true,
       lastFocusedWindow: true,
     });
-    const response = await chrome.tabs.sendMessage(tab.id, {
+    await chrome.tabs.sendMessage(tab.id, {
       selection: args.selectionText,
     });
   })();

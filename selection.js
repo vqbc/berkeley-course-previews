@@ -121,21 +121,23 @@ document.onselectionchange = () => {
   }
 };
 
-async function showCourseReady(req) {
-  if ($(req).find("course").length) {
-    html = $(req).find("course").text();
+async function showCourseReady(response) {
+  if ($(response).find("course").length) {
+    html = $($.parseXML(response)).find("course").text();
   } else {
-    var newReq = await $.ajax({
-      url: urlPrefix + encodeURIComponent(stdName.replace(/ (\d)/, " C$1")),
-    });
-    if ($(newReq).find("course").length) {
-      html = $(newReq).find("course").text();
+    var newResponse = await fetch(
+      urlPrefix + encodeURIComponent(stdName.replace(/ (\d)/, " C$1"))
+    );
+    newResponse = await newResponse.text();
+    if ($(newResponse).find("course").length) {
+      html = $($.parseXML(newResponse)).find("course").text();
     } else {
-      var newReq = await $.ajax({
-        url: urlPrefix + encodeURIComponent(stdName.replace(/(\d)$/, "$1AC")),
-      });
-      if ($(newReq).find("course").length) {
-        html = $(newReq).find("course").text();
+      newResponse = await fetch(
+        urlPrefix + encodeURIComponent(stdName.replace(/(\d)$/, "$1AC"))
+      );
+      newResponse = await newResponse.text();
+      if ($(newResponse).find("course").length) {
+        html = $($.parseXML(newResponse)).find("course").text();
       } else {
         html =
           "<p>Course information cannot be found. This course may " +
@@ -150,27 +152,29 @@ async function showCourseReady(req) {
   }).show();
 }
 
-function showCourseError(req) {
+function showCourseError() {
   html = `<p>An error occurred trying to load course information.
-          Please try your request again later.
-          (${req.status} - ${req.statusText})</p>`;
+          Please try your request again later.</p>`;
   tippy(selectionObj, {
     content: html,
   }).show();
 }
 
-chrome.runtime.onMessage.addListener((request) => {
-  if (request.selection) {
-    stdName = request.selection.getStandardName();
+chrome.runtime.onMessage.addListener(async (msg) => {
+  if (msg.selection) {
+    stdName = msg.selection.getStandardName();
     selectionObj.blur();
 
-    $.ajax({
-      url: urlPrefix + encodeURIComponent(stdName),
-      success: showCourseReady,
-      error: showCourseError,
-    });
     tippy(selectionObj, {
       content: "Loading course description…",
     }).show();
+
+    try {
+      response = await fetch(urlPrefix + encodeURIComponent(stdName));
+      response = await response.text();
+      showCourseReady(response);
+    } catch (error) {
+      showCourseError();
+    }
   }
 });
