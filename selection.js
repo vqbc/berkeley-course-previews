@@ -1,4 +1,4 @@
-var selectionObj;
+var selectionElement; // popup appears above element being selected
 var selectionText;
 var stdName;
 var aliases = {
@@ -72,23 +72,26 @@ var aliases = {
   vietnms: ["vietnamese", "viet"],
   "vis sci": ["vissci"],
   "vis std": ["visstd"],
-};
+}; // expanded from a list in Berkeleytime
 var courseRegex = /^(?:(?:[A-Z]|,){1,8}\s){1,3}?[A-Z]?\d{1,3}[A-Z]{0,2}$/;
 var urlPrefix =
   "https://corsproxy.io/?https://guide.berkeley.edu/ribbit/index.cgi?page=getcourse.rjs&code=";
 var html;
 
+// Convert a colloquial or unformatted name into the official format
 String.prototype.getStandardName = function () {
-  var workingName = this.toLowerCase().replace(/\xA0/g, " ");
+  var workingName = this.toLowerCase().replace(/\xA0/g, " "); // nbsp to space
   for (var [dept, names] of Object.entries(aliases)) {
     for (var name of names) {
       regex = new RegExp("^" + name + "(?:\\s|(\\d))");
+      // ^ match aliases only when at start of string and followed by space or digit
       workingName = workingName.replace(regex, dept + " $1");
     }
   }
   return workingName.toUpperCase();
 };
 
+// Set popup behavior
 tippy.setDefaultProps({
   maxWidth: 600,
   allowHTML: true,
@@ -97,16 +100,18 @@ tippy.setDefaultProps({
     setTimeout(() => {
       instance.destroy();
     }, 300);
-  },
+  }, // delete when hidden
   onShow() {
     tippy.hideAll({ duration: 0 });
-  },
+  }, // hide any other popups
 });
 
 document.onselectionchange = () => {
+  // Change selection element only when text is selected
   if (!document.getSelection().isCollapsed)
-    selectionObj = document.getSelection()?.anchorNode?.parentElement;
+    selectionElement = document.getSelection()?.anchorNode?.parentElement;
 
+  // if selection is a course name, send to background script (else false)
   selectionText = document.getSelection()?.toString().trim();
   if (selectionText?.getStandardName().match(courseRegex)) {
     (async () => {
@@ -124,9 +129,11 @@ document.onselectionchange = () => {
 };
 
 async function showCourseReady(response) {
+  // Get everything inside <course> in the API response
   if ($(response).find("course").length) {
     html = $($.parseXML(response)).find("course").text();
   } else {
+    // If there's nothing try course name with a C prefix
     var newResponse = await fetch(
       urlPrefix + encodeURIComponent(stdName.replace(/ (\d)/, " C$1"))
     );
@@ -134,6 +141,7 @@ async function showCourseReady(response) {
     if ($(newResponse).find("course").length) {
       html = $($.parseXML(newResponse)).find("course").text();
     } else {
+      // If there's still nothing try course name with a AC suffix
       newResponse = await fetch(
         urlPrefix + encodeURIComponent(stdName.replace(/(\d)$/, "$1AC"))
       );
@@ -141,6 +149,7 @@ async function showCourseReady(response) {
       if ($(newResponse).find("course").length) {
         html = $($.parseXML(newResponse)).find("course").text();
       } else {
+        // We give up
         html =
           "<p>Course information cannot be found. This course may " +
           "no longer be offered. If you believe there is an error or " +
@@ -149,6 +158,7 @@ async function showCourseReady(response) {
       }
     }
   }
+  // Add full URLs to the links in the popup (since normally they only show on guide.berkeley.edu)
   var htmlObj = $(html);
   htmlObj.find("a").each(function () {
     $(this).attr({
@@ -158,7 +168,7 @@ async function showCourseReady(response) {
   });
   html = htmlObj.prop("outerHTML");
 
-  var instance = tippy(selectionObj, {
+  var instance = tippy(selectionElement, {
     content: html,
   });
   instance.show();
@@ -168,8 +178,9 @@ async function showCourseReady(response) {
     onClickOutside(instance) {
       instance.hide();
     },
-  });
+  }); // popup only hides when user clicks outside of it
 
+  // When link to a course in popup is clicked, show a new popup
   $(".tippy-box a.bubblelink.code").click(async function (event) {
     event.preventDefault();
     let stdName = $(this).attr("title").replace(/\xA0/g, " ");
@@ -187,21 +198,22 @@ async function showCourseReady(response) {
 function showCourseError() {
   html = `<p>An error occurred trying to load course information.
           Please try your request again later.</p>`;
-  tippy(selectionObj, {
+  tippy(selectionElement, {
     content: html,
   }).show();
 }
 
+// Popup is created after signal from background script when menu option clicked
 chrome.runtime.onMessage.addListener(async (msg) => {
   if (msg.selection) {
     stdName = msg.selection.getStandardName();
-    selectionObj.blur();
 
-    tippy(selectionObj, {
+    tippy(selectionElement, {
       content: "Loading course description…",
     }).show();
 
     try {
+      // Call API with standard course name
       response = await fetch(urlPrefix + encodeURIComponent(stdName));
       response = await response.text();
       showCourseReady(response);

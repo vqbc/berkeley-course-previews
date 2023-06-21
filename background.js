@@ -1,3 +1,4 @@
+// Send selection text to script when menu option clicked
 function showCourse(args) {
   (async () => {
     const [tab] = await chrome.tabs.query({
@@ -12,12 +13,13 @@ function showCourse(args) {
 
 chrome.contextMenus.removeAll();
 
+// Create option after signal from selection.js that selection is a course name
 chrome.runtime.onMessage.addListener(function (msg) {
   if (msg.courseName) {
     chrome.contextMenus.removeAll(() => {
       chrome.contextMenus.create({
         id: "1",
-        title: "View course preview for %s",
+        title: "View course preview for " + msg.courseName,
         contexts: ["selection"],
       });
     });
