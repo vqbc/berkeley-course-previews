@@ -34,6 +34,7 @@
 }
 
 .tippy-content .btn_toggleCoursebody {
+  cursor: initial;
   background: initial;
   border: none !important;
   padding: 0;

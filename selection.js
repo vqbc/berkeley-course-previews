@@ -92,7 +92,7 @@ String.prototype.getStandardName = function () {
 tippy.setDefaultProps({
   maxWidth: 600,
   allowHTML: true,
-  trigger: "click",
+  trigger: "manual",
   onHide(instance) {
     setTimeout(() => {
       instance.destroy();
@@ -147,9 +147,25 @@ async function showCourseReady(response) {
       }
     }
   }
-  tippy(selectionObj, {
+  var htmlObj = $(html);
+  htmlObj.find("a").each(function () {
+    $(this).attr("href", "https://guide.berkeley.edu" + $(this).attr("href"));
+  });
+  html = htmlObj.prop("outerHTML");
+
+  var instance = tippy(selectionObj, {
     content: html,
-  }).show();
+  });
+  instance.show();
+  instance.setProps({
+    hideOnClick: false,
+    triggerTarget: document.querySelector(".tippy-box"),
+    onClickOutside(instance) {
+      instance.hide();
+    },
+  });
+
+  
 }
 
 function showCourseError() {
