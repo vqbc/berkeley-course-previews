@@ -110,7 +110,7 @@ document.onselectionchange = () => {
   // Change selection element only when text is selected
   if (
     !document.getSelection().isCollapsed ||
-    document.getSelection.type == "Range"
+    document.getSelection().type == "Range"
   )
     selectionElement = document.getSelection()?.anchorNode?.parentElement;
 
@@ -166,8 +166,8 @@ async function showCourseReady(response) {
   htmlObj.find("a").each(function () {
     $(this).attr({
       href: "https://guide.berkeley.edu" + $(this).attr("href"),
-      onclick: "",
     });
+    $(this).removeAttr("onclick");
   });
   html = htmlObj.prop("outerHTML");
 
