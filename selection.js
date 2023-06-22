@@ -108,7 +108,10 @@ tippy.setDefaultProps({
 
 document.onselectionchange = () => {
   // Change selection element only when text is selected
-  if (!document.getSelection().isCollapsed)
+  if (
+    !document.getSelection().isCollapsed ||
+    document.getSelection.type == "Range"
+  )
     selectionElement = document.getSelection()?.anchorNode?.parentElement;
 
   // if selection is a course name, send to background script (else false)
@@ -207,6 +210,7 @@ function showCourseError() {
 chrome.runtime.onMessage.addListener(async (msg) => {
   if (msg.selection) {
     stdName = msg.selection.getStandardName();
+    selectionElement.blur();
 
     tippy(selectionElement, {
       content: "Loading course description…",
