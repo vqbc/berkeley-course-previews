@@ -4,12 +4,15 @@
 
 This is a simple browser extension that adds a "Show course preview" option to the right-click menu whenever a course name is selected. The option gets data from the same database used by [guide.berkeley.edu](https://guide.berkeley.edu), and displays it in a popup. This allows Berkeley courses to be searched up faster by removing the need to open a new tab and search websites for the desired course, and is particularly good for when only quick information is needed. For detailed information a course catalog like Berkeleytime is recommended.
 
+Install the extension [here](https://chrome.google.com/webstore/detail/berkeley-course-previews/kemlmipdngpkmjbofbfkkiebmmoiofnh)!
+
 ## Tips
 
 - The popup will find courses even with the C prefix or AC suffix omitted, or with a colloquial subject name like CS61A instead of COMPSCI 61A.
 - Clicking a link to another course in the popup will open a new popup, instead of going to a new site. Of course, one can just open the link in a new tab instead.
 
-## Installation
+## Manual Installation
+If you'd like to modify some things or can't add the extension to your browser via Chrome Web Store, follow the instructions below.
 
 **Google Chrome / Microsoft Edge**
 
