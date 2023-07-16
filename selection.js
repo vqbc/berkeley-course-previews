@@ -42,7 +42,7 @@ var aliases = {
   "l & s": ["l&s", "ls", "lns"],
   "malay/i": ["malayi"],
   "mat sci": ["matsci", "ms", "mse"],
-  "math": ["mathematics, maths"],
+  math: ["mathematics", "maths"],
   mcellbi: ["mcb"],
   "mec eng": ["meceng", "meche", "mech e", "me"],
   "med st": ["medst"],
@@ -89,6 +89,7 @@ String.prototype.getStandardName = function () {
     for (var name of names) {
       regex = new RegExp("^" + name + "(?:\\s|(\\d))");
       // ^ match aliases only when at start of string and followed by space or digit
+      console.log(name);
       workingName = workingName.replace(regex, dept + " $1");
     }
   }
