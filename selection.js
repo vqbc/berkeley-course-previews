@@ -42,6 +42,7 @@ var aliases = {
   "l & s": ["l&s", "ls", "lns"],
   "malay/i": ["malayi"],
   "mat sci": ["matsci", "ms", "mse"],
+  "math": ["mathematics, maths"],
   mcellbi: ["mcb"],
   "mec eng": ["meceng", "meche", "mech e", "me"],
   "med st": ["medst"],
